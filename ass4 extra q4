@@ -1,0 +1,47 @@
+#include <iostream>
+#include <queue>
+#include <vector>
+using namespace std;
+
+int countStudentsUnableToEat(vector<int>& students, vector<int>& sandwiches) {
+    queue<int> q;
+    int n = students.size();
+
+    // Initialize queue with students
+    for (int s : students) {
+        q.push(s);
+    }
+
+    int sandwichIndex = 0;  // top of the sandwich stack
+
+    int rotations = 0; // count students rotated without eating
+
+    while (!q.empty() && rotations < q.size()) {
+        int student = q.front();
+        q.pop();
+
+        if (student == sandwiches[sandwichIndex]) {
+            // Student takes the sandwich
+            sandwichIndex++;
+            rotations = 0;  // reset rotation count
+        } else {
+            // Student goes to back of the queue
+            q.push(student);
+            rotations++;
+        }
+    }
+
+    // Remaining students in queue are unable to eat
+    return q.size();
+}
+
+int main() {
+    vector<int> students = {1, 1, 0, 0};
+    vector<int> sandwiches = {0, 1, 0, 1};
+
+    int unableToEat = countStudentsUnableToEat(students, sandwiches);
+
+    cout << "Number of students unable to eat: " << unableToEat << endl;
+
+    return 0;
+}
