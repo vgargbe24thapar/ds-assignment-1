@@ -1,0 +1,42 @@
+#include <iostream>
+#include <queue>
+#include <unordered_map>
+using namespace std;
+
+void firstNonRepeatingCharacter(const string& str) {
+    // Time Complexity: O(n), where n = length of string
+    // Each character is enqueued and dequeued at most once.
+    // Space Complexity: O(1) or O(256) for frequency map (assuming ASCII charset)
+
+    unordered_map<char, int> freq;
+    queue<char> q;
+
+    for (char ch : str) {
+        // Update frequency
+        freq[ch]++;
+
+        // Push current character into queue
+        q.push(ch);
+
+        // Remove characters from front if their frequency > 1
+        while (!q.empty() && freq[q.front()] > 1) {
+            q.pop();
+        }
+
+        if (q.empty()) {
+            cout << -1 << " ";
+        } else {
+            cout << q.front() << " ";
+        }
+    }
+    cout << endl;
+}
+
+int main() {
+    // Sample input: "a a b c" without spaces
+    string input = "aabc";
+
+    firstNonRepeatingCharacter(input);
+
+    return 0;
+}
