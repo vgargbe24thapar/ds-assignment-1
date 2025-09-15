@@ -1,0 +1,82 @@
+#include <iostream>
+#include <queue>
+#include <stack>
+
+using namespace std;
+
+void interleaveQueue(queue<int>& q) {
+    // Time Complexity: O(n)
+    // Space Complexity: O(n)
+    int n = q.size();
+    if (n % 2 != 0) {
+        cout << "Queue size should be even for perfect interleaving." << endl;
+        return;
+    }
+
+    stack<int> s;
+    int half = n / 2;
+
+    // Step 1: Push first half elements into stack
+    for (int i = 0; i < half; i++) {
+        s.push(q.front());
+        q.pop();
+    }
+
+    // Step 2: Enqueue back the stack elements (reverses first half)
+    while (!s.empty()) {
+        q.push(s.top());
+        s.pop();
+    }
+
+    // Step 3: Move the first half elements (which are reversed first half) to the back
+    for (int i = 0; i < half; i++) {
+        q.push(q.front());
+        q.pop();
+    }
+
+    // Step 4: Push first half elements into stack again
+    for (int i = 0; i < half; i++) {
+        s.push(q.front());
+        q.pop();
+    }
+
+    // Step 5: Interleave the elements of stack and queue
+    while (!s.empty()) {
+        q.push(s.top());
+        s.pop();
+
+        q.push(q.front());
+        q.pop();
+    }
+}
+
+int main() {
+    queue<int> q;
+
+    // Sample input: 4 7 11 20 5 9
+    int arr[] = {4, 7, 11, 20, 5, 9};
+    int size = sizeof(arr)/sizeof(arr[0]);
+
+    for (int i = 0; i < size; i++) {
+        q.push(arr[i]);
+    }
+
+    cout << "Original Queue: ";
+    queue<int> temp = q;  // Copy to print without modifying original
+    while (!temp.empty()) {
+        cout << temp.front() << " ";
+        temp.pop();
+    }
+    cout << endl;
+
+    interleaveQueue(q);
+
+    cout << "Interleaved Queue: ";
+    while (!q.empty()) {
+        cout << q.front() << " ";
+        q.pop();
+    }
+    cout << endl;
+
+    return 0;
+}
