@@ -1,0 +1,71 @@
+#include <iostream>
+#include <queue>
+#include <stack>
+using namespace std;
+
+bool canBeSortedUsingStack(queue<int> inputQ, int n) {
+    stack<int> s;
+    queue<int> outputQ;
+    int expected = 1;
+
+    while (!inputQ.empty()) {
+        int front = inputQ.front();
+        inputQ.pop();
+
+        if (front == expected) {
+            // Directly enqueue to output queue
+            outputQ.push(front);
+            expected++;
+            
+            // After enqueue, check stack top if it matches expected
+            while (!s.empty() && s.top() == expected) {
+                outputQ.push(s.top());
+                s.pop();
+                expected++;
+            }
+        } else {
+            // Push to stack for later
+            if (!s.empty() && s.top() < front) {
+                // If stack top is smaller, it means we won't be able to get sorted output
+                return false;
+            }
+            s.push(front);
+        }
+    }
+
+    // After input queue is empty, pop remaining stack elements
+    while (!s.empty()) {
+        if (s.top() == expected) {
+            outputQ.push(s.top());
+            s.pop();
+            expected++;
+        } else {
+            return false;
+        }
+    }
+
+    // Check if outputQ contains 1 to n in order
+    if (expected == n + 1) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+int main() {
+    queue<int> q;
+    int n = 5;
+    int arr[] = {5, 1, 2, 3, 4};
+
+    for (int i = 0; i < n; i++) {
+        q.push(arr[i]);
+    }
+
+    if (canBeSortedUsingStack(q, n)) {
+        cout << "Yes\n";
+    } else {
+        cout << "No\n";
+    }
+
+    return 0;
+}
