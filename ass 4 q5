@@ -1,0 +1,73 @@
+#include <iostream>
+#include <queue>
+using namespace std;
+
+class StackUsingTwoQueues {
+    queue<int> q1, q2;
+
+public:
+    // Push operation - O(1)
+    // Space Complexity: O(n)
+    void push(int x) {
+        q1.push(x);
+    }
+
+    // Pop operation - O(n) because we move all but last element
+    // Space Complexity: O(n)
+    void pop() {
+        if (q1.empty()) {
+            cout << "Stack is empty\n";
+            return;
+        }
+        // Move all elements except last to q2
+        while (q1.size() > 1) {
+            q2.push(q1.front());
+            q1.pop();
+        }
+        // Remove last pushed element (top of stack)
+        cout << "Popped element: " << q1.front() << endl;
+        q1.pop();
+
+        // Swap q1 and q2
+        swap(q1, q2);
+    }
+
+    // Get top element - O(n)
+    // Space Complexity: O(n)
+    void top() {
+        if (q1.empty()) {
+            cout << "Stack is empty\n";
+            return;
+        }
+        // Move all elements except last to q2
+        while (q1.size() > 1) {
+            q2.push(q1.front());
+            q1.pop();
+        }
+        int topElement = q1.front();
+        cout << "Top element: " << topElement << endl;
+
+        // Push top element to q2 and swap
+        q2.push(topElement);
+        q1.pop();
+        swap(q1, q2);
+    }
+
+    bool empty() {
+        return q1.empty();
+    }
+};
+
+int main() {
+    StackUsingTwoQueues s;
+
+    s.push(10);
+    s.push(20);
+    s.top();     // Should print 20
+    s.pop();     // Pops 20
+    s.top();     // Should print 10
+    s.pop();     // Pops 10
+    s.pop();     // Stack empty
+
+    return 0;
+}
