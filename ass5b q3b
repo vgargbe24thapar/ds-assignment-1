@@ -1,0 +1,32 @@
+#include <iostream>
+using namespace std;
+
+struct CNode {
+    int data;
+    CNode* next;
+    CNode(int val) : data(val), next(nullptr) {}
+};
+
+int sizeCircularLinkedList(CNode* head) {
+    if (head == nullptr) return 0;
+    int count = 1;
+    CNode* temp = head->next;
+    while (temp != head) {
+        count++;
+        temp = temp->next;
+    }
+    return count;
+}
+
+int main() {
+    // Creating a circular linked list: 10 -> 20 -> 30 -> 40 -> back to 10
+    CNode* head = new CNode(10);
+    head->next = new CNode(20);
+    head->next->next = new CNode(30);
+    head->next->next->next = new CNode(40);
+    head->next->next->next->next = head; // circular link
+
+    cout << "Size of Circular Linked List: " << sizeCircularLinkedList(head) << endl; // Output: 4
+
+    return 0;
+}
