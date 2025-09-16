@@ -1,0 +1,93 @@
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* next;
+    Node(int val) : data(val), next(nullptr) {}
+};
+
+class LinkedList {
+public:
+    Node* head;
+
+    LinkedList() : head(nullptr) {}
+
+    void insertAtEnd(int value) {
+        Node* newNode = new Node(value);
+        if (!head) {
+            head = newNode;
+            return;
+        }
+        Node* temp = head;
+        while (temp->next)
+            temp = temp->next;
+        temp->next = newNode;
+    }
+
+    // Function to reverse first k nodes of the linked list
+    Node* reverseKGroup(Node* head, int k) {
+        if (!head) return nullptr;
+
+        // Check if there are at least k nodes to reverse
+        Node* temp = head;
+        int count = 0;
+        while (temp && count < k) {
+            temp = temp->next;
+            count++;
+        }
+        if (count < k) {
+            // Less than k nodes remain, do not reverse
+            return head;
+        }
+
+        // Reverse k nodes
+        Node* prev = nullptr;
+        Node* current = head;
+        Node* next = nullptr;
+        count = 0;
+        while (current && count < k) {
+            next = current->next;
+            current->next = prev;
+            prev = current;
+            current = next;
+            count++;
+        }
+
+        // Now head points to the kth node after reversal, connect it with the next group's head
+        if (next != nullptr)
+            head->next = reverseKGroup(next, k);
+
+        return prev;  // New head after reversal
+    }
+
+    void display(Node* head) {
+        Node* temp = head;
+        while (temp) {
+            cout << temp->data;
+            if (temp->next) cout << "->";
+            temp = temp->next;
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    LinkedList list;
+
+    // Example 1: 1->2->3->4->5->6->7->8->9, K=3
+    int values[] = {1,2,3,4,5,6,7,8,9};
+    for (int v : values)
+        list.insertAtEnd(v);
+
+    cout << "Original List: ";
+    list.display(list.head);
+
+    int k = 3;
+    Node* newHead = list.reverseKGroup(list.head, k);
+
+    cout << "Reversed in groups of " << k << ": ";
+    list.display(newHead);
+
+    return 0;
+}
