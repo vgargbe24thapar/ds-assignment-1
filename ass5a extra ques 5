@@ -1,0 +1,109 @@
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int coeff;
+    int power;
+    Node* next;
+    Node(int c, int p) : coeff(c), power(p), next(nullptr) {}
+};
+
+class Polynomial {
+public:
+    Node* head;
+
+    Polynomial() : head(nullptr) {}
+
+    void insertTerm(int coeff, int power) {
+        Node* newNode = new Node(coeff, power);
+        if (!head || head->power < power) {
+            newNode->next = head;
+            head = newNode;
+            return;
+        }
+
+        Node* temp = head;
+        while (temp->next && temp->next->power > power) {
+            temp = temp->next;
+        }
+
+        if (temp->power == power) {
+            temp->coeff += coeff;  // combine like terms
+        } else if (temp->next && temp->next->power == power) {
+            temp->next->coeff += coeff;
+        } else {
+            newNode->next = temp->next;
+            temp->next = newNode;
+        }
+    }
+
+    // Add two polynomial linked lists
+    static Node* addPolynomials(Node* poly1, Node* poly2) {
+        Node* result = nullptr;
+        Node** tail = &result;
+
+        while (poly1 && poly2) {
+            if (poly1->power == poly2->power) {
+                *tail = new Node(poly1->coeff + poly2->coeff, poly1->power);
+                poly1 = poly1->next;
+                poly2 = poly2->next;
+            } else if (poly1->power > poly2->power) {
+                *tail = new Node(poly1->coeff, poly1->power);
+                poly1 = poly1->next;
+            } else {
+                *tail = new Node(poly2->coeff, poly2->power);
+                poly2 = poly2->next;
+            }
+            tail = &((*tail)->next);
+        }
+
+        // Remaining terms
+        while (poly1) {
+            *tail = new Node(poly1->coeff, poly1->power);
+            tail = &((*tail)->next);
+            poly1 = poly1->next;
+        }
+        while (poly2) {
+            *tail = new Node(poly2->coeff, poly2->power);
+            tail = &((*tail)->next);
+            poly2 = poly2->next;
+        }
+
+        return result;
+    }
+
+    void display(Node* node) {
+        while (node) {
+            cout << "[" << node->coeff << ", " << node->power << "]";
+            if (node->next) cout << " -> ";
+            node = node->next;
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    Polynomial poly1, poly2;
+
+    // List1: [(5,2), (4,1), (2,0)]
+    poly1.insertTerm(5, 2);
+    poly1.insertTerm(4, 1);
+    poly1.insertTerm(2, 0);
+
+    // List2: [(5,1), (5,0)]
+    poly2.insertTerm(5, 1);
+    poly2.insertTerm(5, 0);
+
+    cout << "Polynomial 1: ";
+    poly1.display(poly1.head);
+
+    cout << "Polynomial 2: ";
+    poly2.display(poly2.head);
+
+    Node* result = Polynomial::addPolynomials(poly1.head, poly2.head);
+
+    cout << "Result: ";
+    poly1.display(result);
+
+    return 0;
+}
