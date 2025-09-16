@@ -1,0 +1,101 @@
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* next;
+    Node(int val) : data(val), next(nullptr) {}
+};
+
+class LinkedList {
+public:
+    Node* head;
+    LinkedList() : head(nullptr) {}
+
+    void insertAtEnd(Node* &head, int value) {
+        Node* newNode = new Node(value);
+        if (!head) {
+            head = newNode;
+            return;
+        }
+        Node* temp = head;
+        while (temp->next) temp = temp->next;
+        temp->next = newNode;
+    }
+
+    // Utility function to get length of linked list
+    int getLength(Node* head) {
+        int length = 0;
+        while (head) {
+            length++;
+            head = head->next;
+        }
+        return length;
+    }
+
+    // Function to find intersection node
+    Node* getIntersectionNode(Node* headA, Node* headB) {
+        int lenA = getLength(headA);
+        int lenB = getLength(headB);
+
+        // Advance the longer list's head by the difference in lengths
+        while (lenA > lenB) {
+            headA = headA->next;
+            lenA--;
+        }
+        while (lenB > lenA) {
+            headB = headB->next;
+            lenB--;
+        }
+
+        // Move both pointers together until they meet or reach nullptr
+        while (headA && headB) {
+            if (headA == headB) {
+                return headA;  // Intersection found
+            }
+            headA = headA->next;
+            headB = headB->next;
+        }
+        return nullptr;  // No intersection
+    }
+};
+
+int main() {
+    LinkedList list;
+
+    // Creating first list: 4->1->8->5
+    Node* headA = nullptr;
+    list.insertAtEnd(headA, 4);
+    list.insertAtEnd(headA, 1);
+
+    // Creating second list: 5->6->1
+    Node* headB = nullptr;
+    list.insertAtEnd(headB, 5);
+    list.insertAtEnd(headB, 6);
+    list.insertAtEnd(headB, 1);
+
+    // Create intersection at node with value 8
+    Node* intersectNode = new Node(8);
+    intersectNode->next = new Node(5);
+
+    // Attach intersection node to list A
+    Node* temp = headA;
+    while (temp->next != nullptr)
+        temp = temp->next;
+    temp->next = intersectNode;
+
+    // Attach intersection node to list B
+    temp = headB;
+    while (temp->next != nullptr)
+        temp = temp->next;
+    temp->next = intersectNode;
+
+    Node* intersection = list.getIntersectionNode(headA, headB);
+    if (intersection) {
+        cout << "Intersected at " << intersection->data << endl;
+    } else {
+        cout << "No intersection.\n";
+    }
+
+    return 0;
+}
