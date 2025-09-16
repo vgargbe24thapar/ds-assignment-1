@@ -1,0 +1,61 @@
+#include <iostream>
+using namespace std;
+
+struct Node {
+    char data;
+    Node* prev;
+    Node* next;
+    Node(char c) : data(c), prev(nullptr), next(nullptr) {}
+};
+
+class DoublyLinkedList {
+public:
+    Node* head;
+    Node* tail;
+    DoublyLinkedList() : head(nullptr), tail(nullptr) {}
+
+    void append(char c) {
+        Node* newNode = new Node(c);
+        if (!head) {
+            head = tail = newNode;
+        } else {
+            tail->next = newNode;
+            newNode->prev = tail;
+            tail = newNode;
+        }
+    }
+
+    bool isPalindrome() {
+        Node* left = head;
+        Node* right = tail;
+
+        while (left != right && right->next != left) { // condition for meeting in the middle
+            if (left->data != right->data) {
+                return false;
+            }
+            left = left->next;
+            right = right->prev;
+        }
+        return true;
+    }
+};
+
+int main() {
+    DoublyLinkedList dll;
+
+    string s;
+    cout << "Enter string to create doubly linked list: ";
+    cin >> s;
+
+    for (char c : s) {
+        dll.append(c);
+    }
+
+    if (dll.isPalindrome()) {
+        cout << "The doubly linked list is a palindrome.\n";
+    } else {
+        cout << "The doubly linked list is NOT a palindrome.\n";
+    }
+
+    return 0;
+}
