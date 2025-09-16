@@ -1,0 +1,58 @@
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* next;
+    Node(int val) : data(val), next(nullptr) {}
+};
+
+class LinkedList {
+public:
+    Node* head;
+    LinkedList() : head(nullptr) {}
+
+    void append(int val) {
+        Node* newNode = new Node(val);
+        if (!head) {
+            head = newNode;
+            return;
+        }
+        Node* temp = head;
+        while (temp->next != nullptr)
+            temp = temp->next;
+        temp->next = newNode;
+    }
+
+    // Function to check if linked list is circular
+    bool isCircular() {
+        if (!head) return false;  // Empty list is not circular
+
+        Node* temp = head->next;
+        // Traverse the list, if we come back to head, it is circular
+        while (temp != nullptr && temp != head) {
+            temp = temp->next;
+        }
+        return (temp == head);
+    }
+};
+
+int main() {
+    LinkedList list;
+
+    list.append(1);
+    list.append(2);
+    list.append(3);
+
+    // Making the list circular by pointing last node's next to head
+    // Comment out the below line to test a non-circular list
+    // list.head->next->next->next = list.head;
+
+    if (list.isCircular()) {
+        cout << "The linked list is circular." << endl;
+    } else {
+        cout << "The linked list is NOT circular." << endl;
+    }
+
+    return 0;
+}
