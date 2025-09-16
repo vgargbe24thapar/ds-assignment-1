@@ -1,0 +1,107 @@
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* next;
+    Node(int val) : data(val), next(nullptr) {}
+};
+
+class LinkedList {
+public:
+    Node* head;
+
+    LinkedList() : head(nullptr) {}
+
+    void insertAtEnd(int val) {
+        Node* newNode = new Node(val);
+        if (!head) {
+            head = newNode;
+            return;
+        }
+        Node* temp = head;
+        while (temp->next)
+            temp = temp->next;
+        temp->next = newNode;
+    }
+
+    // Detect and remove loop if exists
+    void removeLoop() {
+        if (!head || !head->next)
+            return;
+
+        Node* slow = head;
+        Node* fast = head;
+
+        // Detect loop using Floyd's cycle detection
+        while (fast && fast->next) {
+            slow = slow->next;
+            fast = fast->next->next;
+
+            if (slow == fast) {  // loop detected
+                break;
+            }
+        }
+
+        // If loop exists
+        if (slow == fast) {
+            slow = head;
+
+            // If loop starts from head
+            if (slow == fast) {
+                while (fast->next != slow) {
+                    fast = fast->next;
+                }
+            } else {
+                // Move both pointers one step at a time until they meet at start of loop
+                while (slow->next != fast->next) {
+                    slow = slow->next;
+                    fast = fast->next;
+                }
+            }
+
+            // Remove loop
+            fast->next = nullptr;
+        }
+    }
+
+    void display() {
+        Node* temp = head;
+        while (temp) {
+            cout << temp->data;
+            if (temp->next) cout << " -> ";
+            temp = temp->next;
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    LinkedList list;
+
+    // Creating linked list: 1->7->3->6 and making a loop from 6 to 7
+    list.insertAtEnd(1);
+    list.insertAtEnd(7);
+    list.insertAtEnd(3);
+    list.insertAtEnd(6);
+
+    // Creating loop manually
+    Node* temp = list.head;
+    Node* loopStart = nullptr;
+    int count = 0;
+    while (temp->next) {
+        if (count == 1) loopStart = temp;  // node with value 7
+        temp = temp->next;
+        count++;
+    }
+    temp->next = loopStart;  // creating loop
+
+    cout << "Loop created in linked list.\n";
+
+    list.removeLoop();
+
+    cout << "Linked list after removing loop:\n";
+    list.display();
+
+    return 0;
+}
