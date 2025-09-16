@@ -1,0 +1,37 @@
+#include <iostream>
+using namespace std;
+
+struct CNode {
+    int data;
+    CNode* next;
+    CNode(int val) : data(val), next(nullptr) {}
+};
+
+// Function to display circular linked list values with head value repeated at the end
+void displayCircularList(CNode* head) {
+    if (!head) {
+        cout << "List is empty.\n";
+        return;
+    }
+    CNode* temp = head;
+    do {
+        cout << temp->data << " ";
+        temp = temp->next;
+    } while (temp != head);
+    // Print head data again at the end
+    cout << head->data << endl;
+}
+
+int main() {
+    // Creating example circular linked list: 20 -> 100 -> 40 -> 80 -> 60 -> (back to 20)
+    CNode* head = new CNode(20);
+    head->next = new CNode(100);
+    head->next->next = new CNode(40);
+    head->next->next->next = new CNode(80);
+    head->next->next->next->next = new CNode(60);
+    head->next->next->next->next->next = head; // Make it circular
+
+    displayCircularList(head);  // Output: 20 100 40 80 60 20
+
+    return 0;
+}
