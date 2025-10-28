@@ -1,0 +1,189 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// ==============================
+// DOUBLY LINKED LIST STRUCTURE
+// ==============================
+struct DNode {
+    int data;
+    struct DNode *prev, *next;
+};
+
+// ==============================
+// CIRCULAR LINKED LIST STRUCTURE
+// ==============================
+struct CNode {
+    int data;
+    struct CNode *next;
+};
+
+// Function to count parity (number of 1s in binary)
+int parityCount(int n) {
+    int count = 0;
+    while (n) {
+        count += n & 1;
+        n >>= 1;
+    }
+    return count;
+}
+
+// ==============================
+// INSERT FUNCTIONS
+// ==============================
+void insertEndDLL(struct DNode **head, int data) {
+    struct DNode *newNode = (struct DNode *)malloc(sizeof(struct DNode));
+    newNode->data = data;
+    newNode->next = NULL;
+    if (*head == NULL) {
+        newNode->prev = NULL;
+        *head = newNode;
+        return;
+    }
+    struct DNode *temp = *head;
+    while (temp->next)
+        temp = temp->next;
+    temp->next = newNode;
+    newNode->prev = temp;
+}
+
+void insertEndCLL(struct CNode **last, int data) {
+    struct CNode *newNode = (struct CNode *)malloc(sizeof(struct CNode));
+    newNode->data = data;
+
+    if (*last == NULL) {
+        newNode->next = newNode;
+        *last = newNode;
+        return;
+    }
+
+    newNode->next = (*last)->next;
+    (*last)->next = newNode;
+    *last = newNode;
+}
+
+// ==============================
+// DELETE FUNCTIONS (Even Parity)
+// ==============================
+
+// Remove even-parity nodes from DLL — O(n) time, O(1) space
+void removeEvenParityDLL(struct DNode **head) {
+    struct DNode *temp = *head;
+
+    while (temp) {
+        struct DNode *nextNode = temp->next;
+        if (parityCount(temp->data) % 2 == 0) {
+            // Remove node
+            if (temp->prev)
+                temp->prev->next = temp->next;
+            else
+                *head = temp->next;
+            if (temp->next)
+                temp->next->prev = temp->prev;
+            free(temp);
+        }
+        temp = nextNode;
+    }
+}
+
+// Remove even-parity nodes from Circular Linked List — O(n) time, O(1) space
+void removeEvenParityCLL(struct CNode **last) {
+    if (*last == NULL) return;
+
+    struct CNode *curr = (*last)->next;
+    struct CNode *prev = *last;
+    struct CNode *head = (*last)->next;
+
+    do {
+        if (parityCount(curr->data) % 2 == 0) {
+            if (curr == *last && curr->next == curr) {
+                // only one node
+                free(curr);
+                *last = NULL;
+                return;
+            } else if (curr == *last) {
+                prev->next = curr->next;
+                *last = prev;
+                free(curr);
+                curr = prev->next;
+            } else if (curr == head) {
+                prev->next = curr->next;
+                free(curr);
+                curr = prev->next;
+                head = curr;
+                (*last)->next = head;
+            } else {
+                prev->next = curr->next;
+                free(curr);
+                curr = prev->next;
+            }
+        } else {
+            prev = curr;
+            curr = curr->next;
+        }
+    } while (curr != (*last)->next);
+}
+
+// ==============================
+// DISPLAY FUNCTIONS
+// ==============================
+void displayDLL(struct DNode *head) {
+    while (head) {
+        printf("%d", head->data);
+        if (head->next) printf(" <=> ");
+        head = head->next;
+    }
+    printf("\n");
+}
+
+void displayCLL(struct CNode *last) {
+    if (!last) {
+        printf("Empty List\n");
+        return;
+    }
+    struct CNode *temp = last->next;
+    do {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    } while (temp != last->next);
+    printf("\n");
+}
+
+// ==============================
+// MAIN FUNCTION
+// ==============================
+int main() {
+    // Example 1: Circular Linked List
+    struct CNode *last = NULL;
+    insertEndCLL(&last, 9);
+    insertEndCLL(&last, 11);
+    insertEndCLL(&last, 34);
+    insertEndCLL(&last, 6);
+    insertEndCLL(&last, 13);
+    insertEndCLL(&last, 21);
+
+    printf("Original CLL: ");
+    displayCLL(last);
+
+    removeEvenParityCLL(&last);
+
+    printf("After Removing Even-Parity Nodes (CLL): ");
+    displayCLL(last);
+
+    // Example 2: Doubly Linked List
+    struct DNode *head = NULL;
+    insertEndDLL(&head, 18);
+    insertEndDLL(&head, 15);
+    insertEndDLL(&head, 8);
+    insertEndDLL(&head, 9);
+    insertEndDLL(&head, 14);
+
+    printf("\nOriginal DLL: ");
+    displayDLL(head);
+
+    removeEvenParityDLL(&head);
+
+    printf("After Removing Even-Parity Nodes (DLL): ");
+    displayDLL(head);
+
+    return 0;
+}
