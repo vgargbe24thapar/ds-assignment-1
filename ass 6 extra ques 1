@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Structure for a Circular Linked List Node
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+// Insert at the end of the circular linked list
+// Time Complexity: O(1) if we track last node, O(n) if not
+void insertEnd(struct Node **last, int data) {
+    struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
+    newNode->data = data;
+
+    if (*last == NULL) {
+        newNode->next = newNode;
+        *last = newNode;
+        return;
+    }
+
+    newNode->next = (*last)->next;
+    (*last)->next = newNode;
+    *last = newNode;
+}
+
+// Function to split circular linked list into two halves
+// Time Complexity: O(n)
+// Space Complexity: O(1)
+void splitList(struct Node *head, struct Node **head1_ref, struct Node **head2_ref) {
+    if (head == NULL)
+        return;
+
+    struct Node *slow_ptr = head;
+    struct Node *fast_ptr = head;
+
+    // Use slow and fast pointer technique to find middle
+    while (fast_ptr->next != head && fast_ptr->next->next != head) {
+        fast_ptr = fast_ptr->next->next;
+        slow_ptr = slow_ptr->next;
+    }
+
+    // For even number of nodes, move fast_ptr one step more
+    if (fast_ptr->next->next == head)
+        fast_ptr = fast_ptr->next;
+
+    // Set heads of the two halves
+    *head1_ref = head;
+    if (head->next != head)
+        *head2_ref = slow_ptr->next;
+
+    // Make first half circular
+    fast_ptr->next = slow_ptr->next;
+    // Make second half circular
+    slow_ptr->next = head;
+}
+
+// Function to print nodes of a circular linked list
+void printList(struct Node *head) {
+    if (head == NULL)
+        return;
+
+    struct Node *temp = head;
+    do {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    } while (temp != head);
+    printf("\n");
+}
+
+// Main function to demonstrate
+int main() {
+    struct Node *last = NULL;
+    struct Node *head1 = NULL, *head2 = NULL;
+
+    // Input: 10 -> 4 -> 9
+    insertEnd(&last, 10);
+    insertEnd(&last, 4);
+    insertEnd(&last, 9);
+
+    printf("Original Circular Linked List: ");
+    printList(last->next); // head = last->next
+
+    splitList(last->next, &head1, &head2);
+
+    printf("First Half: ");
+    printList(head1);
+
+    printf("Second Half: ");
+    printList(head2);
+
+    return 0;
+}
