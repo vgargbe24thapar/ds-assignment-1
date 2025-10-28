@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+//
+// ==========================================================
+//          DOUBLY LINKED LIST IMPLEMENTATION
+// ==========================================================
+struct DNode {
+    int data;
+    struct DNode *prev;
+    struct DNode *next;
+};
+
+// Insert at End — O(n) time, O(1) space
+void insertEndDLL(struct DNode **head, int data) {
+    struct DNode *newNode = (struct DNode *)malloc(sizeof(struct DNode));
+    newNode->data = data;
+    newNode->next = NULL;
+    if (*head == NULL) {
+        newNode->prev = NULL;
+        *head = newNode;
+        return;
+    }
+    struct DNode *temp = *head;
+    while (temp->next)
+        temp = temp->next;
+    temp->next = newNode;
+    newNode->prev = temp;
+}
+
+// Find Size of Doubly Linked List — O(n) time, O(1) space
+int sizeOfDLL(struct DNode *head) {
+    int count = 0;
+    struct DNode *temp = head;
+    while (temp) {
+        count++;
+        temp = temp->next;
+    }
+    return count;
+}
+
+//
+// ==========================================================
+//          CIRCULAR LINKED LIST IMPLEMENTATION
+// ==========================================================
+struct CNode {
+    int data;
+    struct CNode *next;
+};
+
+// Insert at End — O(1) time, O(1) space
+void insertEndCLL(struct CNode **last, int data) {
+    struct CNode *newNode = (struct CNode *)malloc(sizeof(struct CNode));
+    newNode->data = data;
+    if (*last == NULL) {
+        newNode->next = newNode;
+        *last = newNode;
+        return;
+    }
+    newNode->next = (*last)->next;
+    (*last)->next = newNode;
+    *last = newNode;
+}
+
+// Find Size of Circular Linked List — O(n) time, O(1) space
+int sizeOfCLL(struct CNode *last) {
+    if (last == NULL)
+        return 0;
+
+    int count = 0;
+    struct CNode *temp = last->next; // head
+    do {
+        count++;
+        temp = temp->next;
+    } while (temp != last->next);
+
+    return count;
+}
+
+//
+// ==========================================================
+//                         MAIN
+// ==========================================================
+int main() {
+    // ===== Doubly Linked List =====
+    struct DNode *head = NULL;
+    insertEndDLL(&head, 10);
+    insertEndDLL(&head, 20);
+    insertEndDLL(&head, 30);
+    printf("Size of Doubly Linked List: %d\n", sizeOfDLL(head));
+
+    // ===== Circular Linked List =====
+    struct CNode *last = NULL;
+    insertEndCLL(&last, 5);
+    insertEndCLL(&last, 15);
+    insertEndCLL(&last, 25);
+    insertEndCLL(&last, 35);
+    printf("Size of Circular Linked List: %d\n", sizeOfCLL(last));
+
+    return 0;
+}
