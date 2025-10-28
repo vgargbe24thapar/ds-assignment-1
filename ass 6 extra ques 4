@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Structure for doubly linked list node
+struct Node {
+    int data;
+    struct Node *prev;
+    struct Node *next;
+    struct Node *random; // random pointer
+};
+
+// Function to create new node
+struct Node* newNode(int data) {
+    struct Node* temp = (struct Node*)malloc(sizeof(struct Node));
+    temp->data = data;
+    temp->prev = temp->next = temp->random = NULL;
+    return temp;
+}
+
+// Function to print the list along with random pointers
+void printList(struct Node* head) {
+    struct Node* temp = head;
+    printf("List (data, random->data):\n");
+    while (temp) {
+        printf("[%d, ", temp->data);
+        if (temp->random)
+            printf("%d] ", temp->random->data);
+        else
+            printf("NULL] ");
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+// Function to correct the random pointer
+// Time Complexity: O(n), Space Complexity: O(1)
+void correctRandomPointer(struct Node* head) {
+    if (!head)
+        return;
+
+    // Move to the last node
+    struct Node* last = head;
+    while (last->next)
+        last = last->next;
+
+    // Set random pointers correctly
+    // Here we assume correction: random should point to the next node in sequence
+    struct Node* temp = head;
+    while (temp && temp->next) {
+        temp->random = temp->next;
+        temp = temp->next;
+    }
+
+    // Last node’s random pointer set to NULL
+    last->random = NULL;
+}
+
+// Main Function
+int main() {
+    // Create nodes: 1 <-> 2 <-> 3
+    struct Node* head = newNode(1);
+    struct Node* second = newNode(2);
+    struct Node* third = newNode(3);
+
+    // Connect DLL links
+    head->next = second;
+    second->prev = head;
+    second->next = third;
+    third->prev = second;
+
+    // Set one wrong random pointer
+    head->random = NULL;
+    second->random = head;  // Wrong random pointer
+    third->random = NULL;
+
+    printf("Before Correction:\n");
+    printList(head);
+
+    // Correct random pointer
+    correctRandomPointer(head);
+
+    printf("\nAfter Correction:\n");
+    printList(head);
+
+    return 0;
+}
