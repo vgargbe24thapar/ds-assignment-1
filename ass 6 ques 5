@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+// Structure for Linked List Node
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+// Insert at End — O(n) time, O(1) space
+void insertEnd(struct Node **head, int data) {
+    struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = NULL;
+
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+
+    struct Node *temp = *head;
+    while (temp->next != NULL)
+        temp = temp->next;
+    temp->next = newNode;
+}
+
+// Make list circular by linking last node to head — O(n) time
+void makeCircular(struct Node *head) {
+    if (head == NULL)
+        return;
+    struct Node *temp = head;
+    while (temp->next != NULL)
+        temp = temp->next;
+    temp->next = head; // Make it circular
+}
+
+// Function to check if list is circular
+// Time Complexity: O(n)
+// Space Complexity: O(1)
+bool isCircular(struct Node *head) {
+    if (head == NULL)
+        return false;
+
+    struct Node *temp = head->next;
+    while (temp != NULL && temp != head)
+        temp = temp->next;
+
+    return (temp == head);
+}
+
+// Display first few nodes — to avoid infinite loops for circular list
+void display(struct Node *head) {
+    struct Node *temp = head;
+    int count = 0;
+    printf("Linked List: ");
+    while (temp != NULL && count < 15) { // limit printing
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+        count++;
+    }
+    if (temp == head)
+        printf("(back to head)\n");
+    else
+        printf("NULL\n");
+}
+
+// Main function
+int main() {
+    struct Node *head = NULL;
+
+    // Example Input: 2 -> 4 -> 6 -> 7 -> 5
+    insertEnd(&head, 2);
+    insertEnd(&head, 4);
+    insertEnd(&head, 6);
+    insertEnd(&head, 7);
+    insertEnd(&head, 5);
+
+    // Uncomment the next line to make list circular
+    // makeCircular(head);
+
+    display(head);
+
+    if (isCircular(head))
+        printf("Output: The Linked List is Circular.\n");
+    else
+        printf("Output: The Linked List is NOT Circular.\n");
+
+    return 0;
+}
