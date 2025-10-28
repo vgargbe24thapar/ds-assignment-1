@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the node structure
+struct Node {
+    int data;
+    struct Node *next;  // right
+    struct Node *prev;  // left
+    struct Node *up;    // top
+    struct Node *down;  // bottom
+};
+
+// Function to create a new node
+struct Node* newNode(int data) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->data = data;
+    node->next = node->prev = node->up = node->down = NULL;
+    return node;
+}
+
+// Function to construct the doubly linked list from the 2D matrix
+struct Node** constructDLL(int matrix[][3], int rows, int cols) {
+    // Create an array of pointers for each row
+    struct Node** head = (struct Node**)malloc(rows * sizeof(struct Node*));
+    
+    // First create all nodes row-wise
+    for (int i = 0; i < rows; i++) {
+        struct Node* prev = NULL;
+        for (int j = 0; j < cols; j++) {
+            struct Node* curr = newNode(matrix[i][j]);
+            if (prev == NULL) {
+                // Start of new row
+                head[i] = curr;
+            } else {
+                // Link with previous node in the row
+                prev->next = curr;
+                curr->prev = prev;
+            }
+            prev = curr;
+        }
+    }
+
+    // Now link up and down pointers between rows
+    for (int i = 0; i < rows - 1; i++) {
+        struct Node* upper = head[i];
+        struct Node* lower = head[i + 1];
+        while (upper && lower) {
+            upper->down = lower;
+            lower->up = upper;
+
+            upper = upper->next;
+            lower = lower->next;
+        }
+    }
+
+    return head;  // Returns array of pointers to head of each row
+}
+
+// Function to print the doubly linked list row-wise
+void printList(struct Node* head) {
+    struct Node* row = head;
+    while (row) {
+        struct Node* temp = row;
+        while (temp) {
+            printf("%d ", temp->data);
+            temp = temp->next;
+        }
+        printf("\n");
+        row = row->down;
+    }
+}
+
+int main() {
+    int matrix[3][3] = {
+        {1, 2, 3},
+        {4, 5, 6},
+        {7, 8, 9}
+    };
+
+    int rows = 3, cols = 3;
+
+    struct Node** head = constructDLL(matrix, rows, cols);
+
+    printf("Doubly linked list constructed from 2D matrix:\n");
+    printList(head[0]);  // print starting from first row's head
+
+    // Free memory - omitted for brevity
+
+    return 0;
+}
