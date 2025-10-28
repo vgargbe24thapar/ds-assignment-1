@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Structure for Circular Linked List Node
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+// Function to insert a node at the end — O(1) time if we keep track of last node
+void insertEnd(struct Node **last, int data) {
+    struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
+    newNode->data = data;
+
+    if (*last == NULL) {
+        newNode->next = newNode; // first node points to itself
+        *last = newNode;
+        return;
+    }
+
+    newNode->next = (*last)->next; // new node points to head
+    (*last)->next = newNode;       // old last points to new node
+    *last = newNode;               // update last pointer
+}
+
+// Function to display list and repeat head value at end
+// Time Complexity: O(n)
+// Space Complexity: O(1)
+void displayWithHeadRepeat(struct Node *last) {
+    if (last == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+
+    struct Node *head = last->next;
+    struct Node *temp = head;
+
+    printf("Output: ");
+    do {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    } while (temp != head);
+
+    // Repeat head value at the end
+    printf("%d\n", head->data);
+}
+
+// Main function to demonstrate
+int main() {
+    struct Node *last = NULL;
+
+    // Input: 20 → 100 → 40 → 80 → 60
+    insertEnd(&last, 20);
+    insertEnd(&last, 100);
+    insertEnd(&last, 40);
+    insertEnd(&last, 80);
+    insertEnd(&last, 60);
+
+    // Display nodes including repeating head
+    displayWithHeadRepeat(last);
+
+    return 0;
+}
