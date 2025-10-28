@@ -1,0 +1,351 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// ===============================================
+// ====== DOUBLY LINKED LIST STRUCTURE ===========
+// ===============================================
+struct Node {
+    int data;
+    struct Node *next, *prev;
+};
+
+// Function prototypes
+void insertAtBeginningDLL(struct Node **head, int data);
+void insertAtEndDLL(struct Node **head, int data);
+void insertAfterDLL(struct Node **head, int key, int data);
+void insertBeforeDLL(struct Node **head, int key, int data);
+void deleteNodeDLL(struct Node **head, int key);
+void searchDLL(struct Node *head, int key);
+void displayDLL(struct Node *head);
+
+// ===============================================
+// ====== CIRCULAR LINKED LIST STRUCTURE =========
+// ===============================================
+struct CNode {
+    int data;
+    struct CNode *next;
+};
+
+void insertAtBeginningCLL(struct CNode **last, int data);
+void insertAtEndCLL(struct CNode **last, int data);
+void insertAfterCLL(struct CNode *last, int key, int data);
+void insertBeforeCLL(struct CNode **last, int key, int data);
+void deleteNodeCLL(struct CNode **last, int key);
+void searchCLL(struct CNode *last, int key);
+void displayCLL(struct CNode *last);
+
+// ===============================================
+// ================ MAIN MENU ====================
+// ===============================================
+int main() {
+    struct Node *head = NULL;
+    struct CNode *last = NULL;
+    int choice, listType, data, key;
+
+    while (1) {
+        printf("\n================ LINKED LIST MENU ================\n");
+        printf("1. Doubly Linked List Operations\n");
+        printf("2. Circular Linked List Operations\n");
+        printf("3. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &listType);
+
+        if (listType == 3) break;
+
+        if (listType == 1) {
+            // Doubly Linked List
+            printf("\n--- DOUBLY LINKED LIST ---\n");
+            printf("1. Insert at Beginning\n");
+            printf("2. Insert at End\n");
+            printf("3. Insert After a Node\n");
+            printf("4. Insert Before a Node\n");
+            printf("5. Delete a Node\n");
+            printf("6. Search a Node\n");
+            printf("7. Display\n");
+            printf("8. Back to Main Menu\n");
+            printf("Enter your choice: ");
+            scanf("%d", &choice);
+
+            switch (choice) {
+                case 1:
+                    printf("Enter data: ");
+                    scanf("%d", &data);
+                    insertAtBeginningDLL(&head, data);
+                    break;
+                case 2:
+                    printf("Enter data: ");
+                    scanf("%d", &data);
+                    insertAtEndDLL(&head, data);
+                    break;
+                case 3:
+                    printf("Enter key (after which to insert): ");
+                    scanf("%d", &key);
+                    printf("Enter data: ");
+                    scanf("%d", &data);
+                    insertAfterDLL(&head, key, data);
+                    break;
+                case 4:
+                    printf("Enter key (before which to insert): ");
+                    scanf("%d", &key);
+                    printf("Enter data: ");
+                    scanf("%d", &data);
+                    insertBeforeDLL(&head, key, data);
+                    break;
+                case 5:
+                    printf("Enter key (node to delete): ");
+                    scanf("%d", &key);
+                    deleteNodeDLL(&head, key);
+                    break;
+                case 6:
+                    printf("Enter key to search: ");
+                    scanf("%d", &key);
+                    searchDLL(head, key);
+                    break;
+                case 7:
+                    displayDLL(head);
+                    break;
+            }
+        } else if (listType == 2) {
+            // Circular Linked List
+            printf("\n--- CIRCULAR LINKED LIST ---\n");
+            printf("1. Insert at Beginning\n");
+            printf("2. Insert at End\n");
+            printf("3. Insert After a Node\n");
+            printf("4. Insert Before a Node\n");
+            printf("5. Delete a Node\n");
+            printf("6. Search a Node\n");
+            printf("7. Display\n");
+            printf("8. Back to Main Menu\n");
+            printf("Enter your choice: ");
+            scanf("%d", &choice);
+
+            switch (choice) {
+                case 1:
+                    printf("Enter data: ");
+                    scanf("%d", &data);
+                    insertAtBeginningCLL(&last, data);
+                    break;
+                case 2:
+                    printf("Enter data: ");
+                    scanf("%d", &data);
+                    insertAtEndCLL(&last, data);
+                    break;
+                case 3:
+                    printf("Enter key (after which to insert): ");
+                    scanf("%d", &key);
+                    printf("Enter data: ");
+                    scanf("%d", &data);
+                    insertAfterCLL(last, key, data);
+                    break;
+                case 4:
+                    printf("Enter key (before which to insert): ");
+                    scanf("%d", &key);
+                    printf("Enter data: ");
+                    scanf("%d", &data);
+                    insertBeforeCLL(&last, key, data);
+                    break;
+                case 5:
+                    printf("Enter key (node to delete): ");
+                    scanf("%d", &key);
+                    deleteNodeCLL(&last, key);
+                    break;
+                case 6:
+                    printf("Enter key to search: ");
+                    scanf("%d", &key);
+                    searchCLL(last, key);
+                    break;
+                case 7:
+                    displayCLL(last);
+                    break;
+            }
+        }
+    }
+
+    return 0;
+}
+
+// ===============================================
+// ====== DOUBLY LINKED LIST FUNCTIONS ===========
+// ===============================================
+
+// Insert at Beginning — O(1) time, O(1) space
+void insertAtBeginningDLL(struct Node **head, int data) {
+    struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->prev = NULL;
+    newNode->next = *head;
+    if (*head)
+        (*head)->prev = newNode;
+    *head = newNode;
+}
+
+// Insert at End — O(n) time, O(1) space
+void insertAtEndDLL(struct Node **head, int data) {
+    struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    if (*head == NULL) {
+        newNode->prev = NULL;
+        *head = newNode;
+        return;
+    }
+    struct Node *temp = *head;
+    while (temp->next)
+        temp = temp->next;
+    temp->next = newNode;
+    newNode->prev = temp;
+}
+
+// Insert After a Node — O(n) time, O(1) space
+void insertAfterDLL(struct Node **head, int key, int data) {
+    struct Node *temp = *head;
+    while (temp && temp->data != key)
+        temp = temp->next;
+    if (!temp) {
+        printf("Key not found!\n");
+        return;
+    }
+    struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = temp->next;
+    newNode->prev = temp;
+    if (temp->next)
+        temp->next->prev = newNode;
+    temp->next = newNode;
+}
+
+// Insert Before a Node — O(n) time, O(1) space
+void insertBeforeDLL(struct Node **head, int key, int data) {
+    struct Node *temp = *head;
+    while (temp && temp->data != key)
+        temp = temp->next;
+    if (!temp) {
+        printf("Key not found!\n");
+        return;
+    }
+    struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = temp;
+    newNode->prev = temp->prev;
+    if (temp->prev)
+        temp->prev->next = newNode;
+    else
+        *head = newNode;
+    temp->prev = newNode;
+}
+
+// Delete Node — O(n) time, O(1) space
+void deleteNodeDLL(struct Node **head, int key) {
+    struct Node *temp = *head;
+    while (temp && temp->data != key)
+        temp = temp->next;
+    if (!temp) {
+        printf("Node not found!\n");
+        return;
+    }
+    if (temp->prev)
+        temp->prev->next = temp->next;
+    else
+        *head = temp->next;
+    if (temp->next)
+        temp->next->prev = temp->prev;
+    free(temp);
+}
+
+// Search — O(n) time, O(1) space
+void searchDLL(struct Node *head, int key) {
+    struct Node *temp = head;
+    while (temp) {
+        if (temp->data == key) {
+            printf("Node %d found!\n", key);
+            return;
+        }
+        temp = temp->next;
+    }
+    printf("Node %d not found!\n", key);
+}
+
+// Display — O(n) time, O(1) space
+void displayDLL(struct Node *head) {
+    struct Node *temp = head;
+    printf("List: ");
+    while (temp) {
+        printf("%d <-> ", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+// ===============================================
+// ====== CIRCULAR LINKED LIST FUNCTIONS =========
+// ===============================================
+
+// Insert at Beginning — O(1) time, O(1) space
+void insertAtBeginningCLL(struct CNode **last, int data) {
+    struct CNode *newNode = (struct CNode *)malloc(sizeof(struct CNode));
+    newNode->data = data;
+    if (*last == NULL) {
+        newNode->next = newNode;
+        *last = newNode;
+    } else {
+        newNode->next = (*last)->next;
+        (*last)->next = newNode;
+    }
+}
+
+// Insert at End — O(1) time, O(1) space
+void insertAtEndCLL(struct CNode **last, int data) {
+    struct CNode *newNode = (struct CNode *)malloc(sizeof(struct CNode));
+    newNode->data = data;
+    if (*last == NULL) {
+        newNode->next = newNode;
+        *last = newNode;
+    } else {
+        newNode->next = (*last)->next;
+        (*last)->next = newNode;
+        *last = newNode;
+    }
+}
+
+// Insert After — O(n) time, O(1) space
+void insertAfterCLL(struct CNode *last, int key, int data) {
+    if (!last) return;
+    struct CNode *temp = last->next;
+    do {
+        if (temp->data == key) {
+            struct CNode *newNode = (struct CNode *)malloc(sizeof(struct CNode));
+            newNode->data = data;
+            newNode->next = temp->next;
+            temp->next = newNode;
+            if (temp == last)
+                last = newNode;
+            return;
+        }
+        temp = temp->next;
+    } while (temp != last->next);
+    printf("Key not found!\n");
+}
+
+// Insert Before — O(n) time, O(1) space
+void insertBeforeCLL(struct CNode **last, int key, int data) {
+    if (*last == NULL) return;
+    struct CNode *temp = (*last)->next, *prev = *last;
+    do {
+        if (temp->data == key) {
+            struct CNode *newNode = (struct CNode *)malloc(sizeof(struct CNode));
+            newNode->data = data;
+            newNode->next = temp;
+            prev->next = newNode;
+            if (temp == (*last)->next)
+                (*last)->next = newNode;
+            return;
+        }
+        prev = temp;
+        temp = temp->next;
+    } while (temp != (*last)->next);
+    printf("Key not found!\n");
+}
+
+// Delete Node — O(n) time, O(1) space
+void deleteNodeCLL(struct CNode **last, int key) {
+    if (
