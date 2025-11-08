@@ -1,0 +1,38 @@
+// Q7. Merge two BSTs → Sorted Doubly Linked List
+
+#include <stack>
+using namespace std;
+
+/*
+Time Complexity:  O(n1 + n2)
+Space Complexity: O(h1 + h2)
+*/
+
+void pushLeft(Node* root, stack<Node*>& st) {
+    while (root) {
+        st.push(root);
+        root = root->left;
+    }
+}
+
+Node* mergeIntoDLL(Node* root1, Node* root2) {
+    stack<Node*> s1, s2;
+    pushLeft(root1, s1);
+    pushLeft(root2, s2);
+
+    Node* head = NULL, *tail = NULL;
+
+    while (!s1.empty() || !s2.empty()) {
+        stack<Node*>& st = (s2.empty() || (!s1.empty() && s1.top()->data <= s2.top()->data)) ? s1 : s2;
+        Node* node = st.top();
+        st.pop();
+        pushLeft(node->right, st);
+
+        node->left = tail;
+        if (tail) tail->right = node;
+        else head = node;
+
+        tail = node;
+    }
+    return head;
+}
