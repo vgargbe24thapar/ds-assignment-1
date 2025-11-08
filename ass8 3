@@ -1,0 +1,107 @@
+#include <iostream>
+using namespace std;
+
+/*
+Time Complexity:
+Insert:  O(h)
+Delete:  O(h)
+Min/Max depth: O(n)
+Space Complexity: O(h)
+where h = height of BST
+*/
+
+struct Node {
+    int data;
+    Node *left, *right;
+};
+
+// Create node
+Node* createNode(int value) {
+    Node* newNode = new Node();
+    newNode->data = value;
+    newNode->left = newNode->right = NULL;
+    return newNode;
+}
+
+// (a) Insert node (NO DUPLICATES ALLOWED)
+Node* insert(Node* root, int value) {
+    if (root == NULL)
+        return createNode(value);
+
+    if (value < root->data)
+        root->left = insert(root->left, value);
+    else if (value > root->data)
+        root->right = insert(root->right, value);
+
+    return root;
+}
+
+// Find minimum value node
+Node* findMin(Node* root) {
+    while (root->left != NULL)
+        root = root->left;
+    return root;
+}
+
+// (b) Delete node in BST
+Node* deleteNode(Node* root, int key) {
+    if (root == NULL)
+        return root;
+
+    if (key < root->data)
+        root->left = deleteNode(root->left, key);
+
+    else if (key > root->data)
+        root->right = deleteNode(root->right, key);
+
+    else {
+        if (root->left == NULL) {
+            Node* temp = root->right;
+            delete root;
+            return temp;
+        }
+        else if (root->right == NULL) {
+            Node* temp = root->left;
+            delete root;
+            return temp;
+        }
+
+        Node* temp = findMin(root->right);
+        root->data = temp->data;
+        root->right = deleteNode(root->right, temp->data);
+    }
+    return root;
+}
+
+// (c) Maximum depth of BST
+int maxDepth(Node* root) {
+    if (root == NULL)
+        return 0;
+    return 1 + max(maxDepth(root->left), maxDepth(root->right));
+}
+
+// (d) Minimum depth of BST
+int minDepth(Node* root) {
+    if (root == NULL)
+        return 0;
+    return 1 + min(minDepth(root->left), minDepth(root->right));
+}
+
+int main() {
+    Node* root = NULL;
+
+    root = insert(root, 50);
+    insert(root, 30);
+    insert(root, 70);
+    insert(root, 20);
+    insert(root, 40);
+    insert(root, 60);
+    insert(root, 80);
+
+    root = deleteNode(root, 30);
+
+    cout << "Max depth of BST: " << maxDepth(root) << endl;
+    cout << "Min depth of BST: " << minDepth(root) << endl;
+
+    return 0;
+}
