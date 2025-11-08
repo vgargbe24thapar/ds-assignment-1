@@ -1,0 +1,56 @@
+#include <iostream>
+using namespace std;
+
+/*
+Time Complexity:
+Insert: O(log n)
+Extract Max: O(log n)
+Space Complexity: O(n)
+*/
+
+int heap[100], heapSize = 0;
+
+void insert(int value) {
+    heap[++heapSize] = value;
+    int i = heapSize;
+
+    while (i > 1 && heap[i / 1] < heap[i]) {
+        swap(heap[i], heap[i / 2]);
+        i /= 2;
+    }
+}
+
+int extractMax() {
+    int maxValue = heap[1];
+    heap[1] = heap[heapSize--];
+    
+    int i = 1;
+    while (true) {
+        int left = i * 2;
+        int right = i * 2 + 1;
+        int largest = i;
+
+        if (left <= heapSize && heap[left] > heap[largest])
+            largest = left;
+        if (right <= heapSize && heap[right] > heap[largest])
+            largest = right;
+
+        if (largest != i) {
+            swap(heap[i], heap[largest]);
+            i = largest;
+        } else break;
+    }
+    return maxValue;
+}
+
+int main() {
+    insert(40);
+    insert(10);
+    insert(50);
+    insert(30);
+
+    cout << "Extracted Max: " << extractMax() << endl;
+    cout << "Extracted Max: " << extractMax() << endl;
+
+    return 0;
+}
