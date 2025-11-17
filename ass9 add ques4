@@ -1,0 +1,33 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+void DFS(int i, int j, vector<vector<int>> &grid) {
+    int m = grid.size(), n = grid[0].size();
+    if (i < 0 || i >= m || j < 0 || j >= n || grid[i][j] == 0) return;
+    grid[i][j] = 0;
+    DFS(i+1, j, grid);
+    DFS(i-1, j, grid);
+    DFS(i, j+1, grid);
+    DFS(i, j-1, grid);
+}
+
+int numIslands(vector<vector<int>> &grid) {
+    int count = 0;
+    int m = grid.size(), n = grid[0].size();
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            if (grid[i][j] == 1) {
+                DFS(i, j, grid);
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int main() {
+    vector<vector<int>> grid = {{1,1,0},{0,1,0},{1,0,1}};
+    cout << numIslands(grid) << endl;
+    return 0;
+}
